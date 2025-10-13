@@ -1,0 +1,56 @@
+{% extends 'contacts/base.html' %}
+
+{% block title %}Contact List - Contact Book{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h2>📞 My Contacts</h2>
+    <form method="GET" class="search-form">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="🔍 Search contacts..." 
+            value="{{ query }}"
+            class="search-input"
+        >
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if query %}
+            <a href="{% url 'contact_list' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if contacts %}
+    <div class="contacts-grid">
+        {% for contact in contacts %}
+            <div class="contact-card">
+                <div class="contact-header">
+                    <h3>{{ contact.name }}</h3>
+                </div>
+                <div class="contact-body">
+                    <p><strong>📱 Phone:</strong> {{ contact.phone }}</p>
+                    <p><strong>📧 Email:</strong> {{ contact.email }}</p>
+                    <p><strong>🏠 Address:</strong> {{ contact.address }}</p>
+                </div>
+                <div class="contact-actions">
+                    <a href="{% url 'contact_update' contact.pk %}" class="btn btn-edit">✏️ Edit</a>
+                    <a href="{% url 'contact_delete' contact.pk %}" class="btn btn-delete">🗑️ Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>📭 No contacts found.</p>
+        {% if query %}
+            <p>Try a different search term or <a href="{% url 'contact_list' %}">view all contacts</a>.</p>
+        {% else %}
+            <p><a href="{% url 'contact_create' %}" class="btn btn-primary">Add your first contact</a></p>
+        {% endif %}
+    </div>
+{% endif %}
+
+<div class="contact-count">
+    <p>Total contacts: <strong>{{ contacts.count }}</strong></p>
+</div>
+{% endblock %}
