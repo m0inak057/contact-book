@@ -2,7 +2,7 @@
 
 # Build script for Vercel
 echo "Installing dependencies..."
-pip install -r requirements.txt
+pip3.12 install -r requirements.txt
 
 echo "Collecting static files..."
-python manage.py collectstatic --noinput --clear
+python3.12 manage.py collectstatic --noinput --clear
