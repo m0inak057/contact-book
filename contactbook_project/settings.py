@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,21 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-try:
-    SECRET_KEY = config('SECRET_KEY', default='django-insecure-juq&kuu4yqhl0sn907jst8t(8njpd=t#^3tl3-l#c@mi&imw&f')
-except:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-juq&kuu4yqhl0sn907jst8t(8njpd=t#^3tl3-l#c@mi&imw&f')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-juq&kuu4yqhl0sn907jst8t(8njpd=t#^3tl3-l#c@mi&imw&f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-try:
-    DEBUG = config('DEBUG', default=True, cast=bool)
-except:
-    DEBUG = os.environ.get('DEBUG', 'True').lower() in ['true', '1', 'yes']
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ['true', '1', 'yes']
 
-try:
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.vercel.app').split(',')
-except:
-    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
 
 
 # Application definition
@@ -87,23 +77,29 @@ WSGI_APPLICATION = 'contactbook_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Use Supabase PostgreSQL in production, SQLite for local development
-# Try python-decouple first, fallback to os.environ
-try:
-    DATABASE_URL = config('DATABASE_URL', default=None)
-except:
-    DATABASE_URL = os.environ.get('DATABASE_URL', None)
+DATABASE_URL = os.environ.get('DATABASE_URL', None)
 
 # Debug: Print if we're using DATABASE_URL (remove after testing)
 if DATABASE_URL:
     print(f"Using PostgreSQL database: {DATABASE_URL[:50]}...")
     # Production: Use Supabase PostgreSQL
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    try:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    except Exception as e:
+        print(f"Database URL parsing error: {e}")
+        # Fallback to SQLite if database URL is invalid
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
     print("Using SQLite database for development")
     # Development: Use SQLite
