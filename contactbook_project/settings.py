@@ -73,43 +73,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'contactbook_project.wsgi.application'
 
 
+# contactbook_project/settings.py
+
+# ... (previous settings)
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Use Supabase PostgreSQL in production, SQLite for local development
-DATABASE_URL = os.environ.get('DATABASE_URL', None)
-
-# Debug: Print if we're using DATABASE_URL (remove after testing)
 if DATABASE_URL:
-    print(f"Using PostgreSQL database: {DATABASE_URL[:50]}...")
-    # Production: Use Supabase PostgreSQL
-    try:
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=DATABASE_URL,
-                conn_max_age=600,
-                conn_health_checks=True,
-            )
-        }
-    except Exception as e:
-        print(f"Database URL parsing error: {e}")
-        # Fallback to SQLite if database URL is invalid
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-else:
-    print("Using SQLite database for development")
-    # Development: Use SQLite
+    print("Using PostgreSQL database...")
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True, # Often required by cloud database providers
+        )
+    }
+else:
+    print("DATABASE_URL not found, using SQLite for local development.")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
+# ... (rest of the settings)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
