@@ -27,6 +27,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-juq&kuu4yqhl0sn907jst
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ['true', '1', 'yes']
 
+# Temporarily enable debug for troubleshooting
+if not os.environ.get('DEBUG'):
+    DEBUG = True
+
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
 
 
@@ -138,7 +142,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Only include static directory if it exists
+import os
+static_dir = BASE_DIR / 'static'
+if os.path.exists(static_dir):
+    STATICFILES_DIRS = [static_dir]
+else:
+    STATICFILES_DIRS = []
 
 # WhiteNoise configuration for serving static files
 STORAGES = {
@@ -146,7 +157,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
