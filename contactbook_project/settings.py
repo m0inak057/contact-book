@@ -25,11 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-juq&kuu4yqhl0sn907jst8t(8njpd=t#^3tl3-l#c@mi&imw&f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() in ['true', '1', 'yes']
-
-# Temporarily enable debug for troubleshooting
-if not os.environ.get('DEBUG'):
-    DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
 
@@ -143,13 +139,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Only include static directory if it exists
-import os
-static_dir = BASE_DIR / 'static'
-if os.path.exists(static_dir):
-    STATICFILES_DIRS = [static_dir]
-else:
-    STATICFILES_DIRS = []
+# No need for STATICFILES_DIRS when using app-level static files
+# Django automatically finds static files in each app's static/ directory
 
 # WhiteNoise configuration for serving static files
 STORAGES = {
