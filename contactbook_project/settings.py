@@ -39,18 +39,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'contacts',  # Our contacts app
+
+    # Add these new apps
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # Your app
+    'contacts',
 ]
+
+SITE_ID = 1  # Required by allauth
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware', # <-- Add this
 ]
 
 ROOT_URLCONF = 'contactbook_project.urls'
@@ -58,7 +69,7 @@ ROOT_URLCONF = 'contactbook_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Add project-level templates directory
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -167,3 +178,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #             conn_max_age=600
 #         )
 #     }
+# --- Allauth Configuration ---
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Redirect users to the contact list after login/logout
+LOGIN_REDIRECT_URL = 'contact_list'
+LOGOUT_REDIRECT_URL = 'contact_list'
+
+# Username/Email/Password settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True  # Allow username
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Allow both username and email
+ACCOUNT_EMAIL_VERIFICATION = 'none' # Easiest for setup
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5  # Optional: limit login attempts
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # Optional: timeout in seconds

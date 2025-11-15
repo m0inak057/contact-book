@@ -1,0 +1,81 @@
+{% extends 'contacts/base.html' %}
+{% load static %}
+
+{% block title %}Login History - Contact Book{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <h2>🔒 My Login History</h2>
+    <p class="subtitle">View your recent login activity and security information</p>
+    
+    {% if login_records %}
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>{{ login_records|length }}</h3>
+                <p>Recent Logins</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ login_records.0.device_type }}</h3>
+                <p>Last Device</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ login_records.0.login_time|date:"M d" }}</h3>
+                <p>Last Login</p>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <p>💡 <strong>Security Tip:</strong> Review your login history regularly. If you see any suspicious activity, change your password immediately.</p>
+        </div>
+        
+        <!-- Login History Table -->
+        <div class="table-responsive">
+            <table class="login-history-table">
+                <thead>
+                    <tr>
+                        <th>🕒 Login Time</th>
+                        <th>🌐 IP Address</th>
+                        <th>📱 Device</th>
+                        <th>🌍 Browser</th>
+                        <th>💻 Operating System</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in login_records %}
+                    <tr>
+                        <td>
+                            <strong>{{ record.login_time|date:"M d, Y" }}</strong><br>
+                            <small style="color: #6c757d;">{{ record.login_time|date:"h:i A" }}</small>
+                        </td>
+                        <td><code>{{ record.ip_address }}</code></td>
+                        <td>
+                            <span class="badge badge-{{ record.device_type|lower }}">
+                                {% if record.device_type == "Mobile" %}📱{% elif record.device_type == "Desktop" %}💻{% elif record.device_type == "Tablet" %}📲{% else %}❓{% endif %}
+                                {{ record.device_type }}
+                            </span>
+                        </td>
+                        <td>{{ record.browser|default:"Unknown" }}</td>
+                        <td>{{ record.os|default:"Unknown" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p style="font-size: 3rem;">🔍</p>
+            <p>No login history available yet.</p>
+            <p style="font-size: 0.9rem; color: #999;">Your future logins will be tracked here for security purposes.</p>
+        </div>
+    {% endif %}
+    
+    <div class="action-buttons">
+        <a href="{% url 'contact_list' %}" class="btn btn-secondary">← Back to Contacts</a>
+        {% if login_records %}
+        <a href="{% url 'account_change_password' %}" class="btn btn-primary">🔐 Change Password</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

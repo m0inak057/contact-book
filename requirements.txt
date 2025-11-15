@@ -1,10 +1,12 @@
 asgiref==3.10.0
 dj-database-url==3.0.1
-Django==5.2.7
+Django>=5.0,<5.1  # <-- Changed to a stable version
 djangorestframework==3.16.1
 psycopg2-binary==2.9.11
 python-decouple==3.8
 sqlparse==0.5.3
 tzdata==2025.2
 whitenoise==6.11.0
-gunicorn==21.2.0
+gunicorn==22.0.0            # <-- Added for Render
+django-allauth>=0.61.1      # <-- Added for authentication
+user-agents>=2.2.0          # <-- Added for parsing user agent strings

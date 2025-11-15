@@ -1,0 +1,45 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+{% block title %}Logout - Contact Book{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>👋 Sign Out</h2>
+    <p style="text-align: center; color: #6c757d; margin-bottom: 2rem;">Are you sure you want to sign out?</p>
+    
+    <form method="POST" action="{% url 'account_logout' %}" class="auth-form">
+        {% csrf_token %}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        
+        <button type="submit" class="btn btn-danger" style="width: 100%;">
+            🚪 Yes, Sign Me Out
+        </button>
+    </form>
+    
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a href="{% url 'contact_list' %}" class="btn btn-secondary" style="display: inline-block;">
+            ← No, Take Me Back
+        </a>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
