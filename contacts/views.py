@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
+from django.http import HttpResponse
 from .models import Contact, UserLoginInfo
 from django.contrib.auth.decorators import login_required # <-- Import login_required
 
@@ -110,3 +111,8 @@ def login_history(request):
         'login_records': login_records,
     }
     return render(request, 'contacts/login_history.html', context)
+
+
+def health(request):
+    """Simple health-check endpoint for uptime pings"""
+    return HttpResponse("OK", content_type="text/plain")
